@@ -190,7 +190,7 @@ class Console extends Extension {
                 // }
                 // console.log(lines);
                 // this.terminal.writeln('');
-                this.terminal.write(`\x1b1K\x1b[3D\x1b[3D\x1b[3D${args.COLOR}${args.TEXT}${COLORS.COLOR_NORMAL}`);
+                this.terminal.write(`\x1b1\x1b[3D\x1b[3D\x1b[3D${args.COLOR}${args.TEXT}${COLORS.COLOR_NORMAL}`);
                 this.terminal.prompt();
             }
         });
