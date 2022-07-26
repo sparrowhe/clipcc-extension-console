@@ -6,11 +6,13 @@ require('xterm/css/xterm.css');
 require('./index.css');
 
 const COLORS = {
-    COLOR_NORMAL: '\033[0m',
-    COLOR_GREEN: '\033[1;32m',
-    COLOR_YELLOW: '\033[1;33m',
-    COLOR_RED: '\033[1;33m',
-    COLOR_GREY: '\033[1;30m',
+    COLOR_NORMAL: '\x1b[0m',
+    COLOR_GREEN: '\x1b[1;32m',
+    COLOR_YELLOW: '\x1b[1;33m',
+    COLOR_RED: '\x1b[1;31m',
+    COLOR_MAGENTA: '\x1b[1;35m',
+    COLOR_CYAN: '\x1b[1;36m',
+    COLOR_GREY: '\x1b[1;30m',
 }
 
 class Console extends Extension {
@@ -162,6 +164,14 @@ class Console extends Extension {
                         {
                             messageId: 'top.sparrowhe.console.color_grey',
                             value: COLORS.COLOR_GREY
+                        },
+                        {
+                            messageId: 'top.sparrowhe.console.color_magenta',
+                            value: COLORS.COLOR_MAGENTA
+                        },
+                        {
+                            messageId: 'top.sparrowhe.console.color_cyan',
+                            value: COLORS.COLOR_CYAN
                         }
                     ],
                     defaultValue: COLORS.COLOR_NORMAL
@@ -172,8 +182,15 @@ class Console extends Extension {
                 }
             },
             function: (args) => {
-                this.terminal.writeln(``);
-                this.terminal.write(`${args.COLOR}${args.TEXT}${COLORS.COLOR_NORMAL}`);
+                // let lines = this.terminal.;
+                // lines = lines.split('\n');
+                // let lastLine = lines[lines.length - 1];
+                // if (lastLine.startsWith('>>> ')) {
+                //     this.terminal.write(`\x1b[2K\r`);
+                // }
+                // console.log(lines);
+                // this.terminal.writeln('');
+                this.terminal.write(`\x1b1K\x1b[3D\x1b[3D\x1b[3D${args.COLOR}${args.TEXT}${COLORS.COLOR_NORMAL}`);
                 this.terminal.prompt();
             }
         });
@@ -204,6 +221,19 @@ class Console extends Extension {
                 return this.newCommandStr;
             }
         });
+        api.addBlock({
+            opcode: 'top.sparrowhe.console.is_open',
+            type: type.BlockType.REPORTER,
+            messageId: 'top.sparrowhe.console.is_open',
+            categoryId: 'top.sparrowhe.console.category',
+            function: (args) => {
+                if (document.getElementById("sparrow-console").style.display === 'none') {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        })
     }
     onUninit() {
         // 删除 sparrow-console-main-contariner

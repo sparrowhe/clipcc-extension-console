@@ -5,6 +5,7 @@
     "top.sparrowhe.console.open": "Open console",
     "top.sparrowhe.console.close": "Close console",
     "top.sparrowhe.console.command": "Executed command",
+    "top.sparrowhe.console.is_open": "Console is open?",
     "top.sparrowhe.console.execute": "When execute a command",
     "top.sparrowhe.console.output_log": "Output [TEXT] to Console use [COLOR]",
     "top.sparrowhe.console.output_info": "Log [TEXT]",
@@ -16,5 +17,7 @@
     "top.sparrowhe.console.color_blue": "Blue",
     "top.sparrowhe.console.color_red": "Red",
     "top.sparrowhe.console.color_yellow": "Yellow",
-    "top.sparrowhe.console.color_grey": "Grey"
+    "top.sparrowhe.console.color_grey": "Grey",
+    "top.sparrowhe.console.color_cyan": "Cyan",
+    "top.sparrowhe.console.color_magenta": "Magenta"
 }

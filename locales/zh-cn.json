@@ -6,6 +6,7 @@
     "top.sparrowhe.console.close": "关闭控制台",
     "top.sparrowhe.console.command": "执行的指令",
     "top.sparrowhe.console.execute": "当执行指令",
+    "top.sparrowhe.console.is_open": "控制台打开?",
     "top.sparrowhe.console.output_log": "输出 [COLOR] 的 [TEXT]",
     "top.sparrowhe.console.output_info": "记录日志 [TEXT]",
     "top.sparrowhe.console.output_warn": "警告 [TEXT]",
@@ -16,5 +17,7 @@
     "top.sparrowhe.console.color_blue": "蓝色",
     "top.sparrowhe.console.color_red": "红色",
     "top.sparrowhe.console.color_yellow": "黄色",
-    "top.sparrowhe.console.color_grey": "灰色"
+    "top.sparrowhe.console.color_grey": "灰色",
+    "top.sparrowhe.console.color_cyan": "青色",
+    "top.sparrowhe.console.color_magenta": "紫色"
 }
