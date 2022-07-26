@@ -39,12 +39,21 @@ class Console extends Extension {
             }
         }
         let element = document.createElement("div");
-        element.style.overflow="hidden";
+        element.style.overflow = 'hidden';
+        element.id = 'sparrow-console-main-container';
         element.innerHTML = `
             <div class="sparrow-console" id="sparrow-console" style="display: none;">
-                <div class="sparrow-console-header" id="sparrow-console-header">
-                    <div class="sparrow-console-header-title">
+                <div class="sparrow-console-header" id="sparrow-console-header" style="display: flex; align-items: center">
+                    <div class="sparrow-console-header-title" style="width: 100%">
                         <span class="sparrow-console-header-title-text">ClipCC Console</span>
+                    </div>
+                    <div class="sparrow-console-header-close" id="sparrow-console-header-close" style="width: 15px; height: 15px;">
+                        <div class="sparrow-console-header-close-icon">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 6L6 18" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M6 6L18 18" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
                     </div>
                 </div>
                 <div class="sparrow-console-body" id="sparrow-console-body">
@@ -56,11 +65,14 @@ class Console extends Extension {
         let curr_line = '';
 
         let headerElement = document.getElementById('sparrow-console-header');
-
+        let closeButton = document.getElementById('sparrow-console-header-close');
         headerElement.addEventListener("mousedown", () => {
             document.addEventListener("mousemove", this.handleMove);
             document.addEventListener("mouseup", this.handleDone);
-        })
+        });
+        closeButton.addEventListener("click", () => {
+            document.getElementById('sparrow-console').style.display = 'none';
+        });
 
         this.terminal.prompt = () => {
             this.terminal.write("\r\n>>> ");
@@ -76,8 +88,10 @@ class Console extends Extension {
                 curr_line = curr_line.substring(0, curr_line.length - 1);
                 this.terminal.write('\b \b');
             } else {
-                curr_line += key;
-                this.terminal.write(key)
+                if (domEvent.key.length === 1) {
+                    curr_line += key;
+                    this.terminal.write(key)
+                }
             }
         })
 
@@ -154,7 +168,7 @@ class Console extends Extension {
                 },
                 TEXT: {
                     type: type.ParameterType.STRING,
-                    defaultValue: 'Hello World!'
+                    defaultValue: 'Hello'
                 }
             },
             function: (args) => {
@@ -187,9 +201,23 @@ class Console extends Extension {
             messageId: 'top.sparrowhe.console.command',
             categoryId: 'top.sparrowhe.console.category',
             function: (args) => {
-                return command_str;
+                return this.newCommandStr;
             }
         });
+    }
+    onUninit() {
+        // 删除 sparrow-console-main-contariner
+        let element = document.getElementById('sparrow-console-main-container');
+        element.remove();
+        api.removeCategory('top.sparrowhe.console.category');
+        api.removeBlocks([
+            'top.sparrowhe.console.open',
+            'top.sparrowhe.console.close',
+            'top.sparrowhe.console.clear',
+            'top.sparrowhe.console.output_log',
+            'top.sparrowhe.console.execute',
+            'top.sparrowhe.console.command'
+        ]);
     }
     handleCommand(command) {
         if (command.trim() === 'help') {
@@ -199,6 +227,9 @@ class Console extends Extension {
         } else if (command.trim() === 'clear') {
             this.terminal.clear();
         } else if (command.trim().startsWith('exec')) {
+            if (command.trim().split(' ').length <= 1) {
+                this.terminal.writeln('Not enough arguments, check help text to see how to use this command');
+            }
             const command_str = command.trim().substring(4).trim();
             this.newCommand = true;
             this.newCommandStr = command_str;
@@ -206,6 +237,7 @@ class Console extends Extension {
             // eval(command_str);
         } else {
             this.terminal.writeln(`Unknown command: ${command}`);
+            this.terminal.writeln(`Type "help" for a list of commands.`);
         }
     }
     handleMove(element) {
@@ -214,7 +246,7 @@ class Console extends Extension {
         container.style.left = "".concat(parseInt(e.left) + element.movementX, "px"),
         container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
     }
-    handleDone(element) {
+    handleDone() {
         document.removeEventListener("mousemove", this.handleMove);
         document.removeEventListener("mouseup", this.handleDone);
     }
