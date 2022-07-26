@@ -1,0 +1,9 @@
+{
+    "id": "top.sparrowhe.console",
+    "author": "Sparrow He",
+    "version": "0.0.1",
+    "icon": "assets/icon.png",
+    "inset_icon": "assets/inset_icon.svg",
+    "api": 1,
+    "optional": false
+}

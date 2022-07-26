@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="40" height="40" viewBox="0 0 40 40">
+  <defs>
+    <clipPath id="clip-Console">
+      <rect width="40" height="40"/>
+    </clipPath>
+  </defs>
+  <g id="Console" clip-path="url(#clip-Console)">
+    <rect width="40" height="40" fill="rgba(255,255,255,0)"/>
+    <path id="路径_1" data-name="路径 1" d="M1.976-1.456v-2.99L9.516-7.93a8.84,8.84,0,0,1,1.027-.39q.507-.156.793-.234-.286-.052-.806-.195a6.213,6.213,0,0,1-1.014-.377l-7.54-3.51v-3.042l11.648,5.486v3.25ZM17.16,3.588V.65H29.64V3.588Z" transform="translate(5 30)" fill="#fff"/>
+  </g>
+</svg>
