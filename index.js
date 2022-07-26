@@ -229,6 +229,7 @@ class Console extends Extension {
         } else if (command.trim().startsWith('exec')) {
             if (command.trim().split(' ').length <= 1) {
                 this.terminal.writeln('Not enough arguments, check help text to see how to use this command');
+                return;
             }
             const command_str = command.trim().substring(4).trim();
             this.newCommand = true;
