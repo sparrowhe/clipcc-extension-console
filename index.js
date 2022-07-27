@@ -15,6 +15,16 @@ const COLORS = {
     COLOR_GREY: '\x1b[1;30m',
 }
 
+const COLOR_NAME = {
+    NORMAL: 'normal',
+    GREEN: 'green',
+    YELLOW: 'yellow',
+    RED: 'red',
+    MAGENTA: 'magenta',
+    CYAN: 'cyan',
+    GREY: 'grey',
+}
+
 class Console extends Extension {
 
     constructor(terminal) {
@@ -147,34 +157,34 @@ class Console extends Extension {
                     menu: [
                         {
                             messageId: 'top.sparrowhe.console.color_normal',
-                            value: COLORS.COLOR_NORMAL
+                            value: COLOR_NAME.NORMAL
                         },
                         {
                             messageId: 'top.sparrowhe.console.color_green',
-                            value: COLORS.COLOR_GREEN
+                            value: COLOR_NAME.GREEN
                         },
                         {
                             messageId: 'top.sparrowhe.console.color_yellow',
-                            value: COLORS.COLOR_YELLOW
+                            value: COLOR_NAME.YELLOW
                         },
                         {
                             messageId: 'top.sparrowhe.console.color_red',
-                            value: COLORS.COLOR_RED
+                            value: COLOR_NAME.RED
                         },
                         {
                             messageId: 'top.sparrowhe.console.color_grey',
-                            value: COLORS.COLOR_GREY
+                            value: COLOR_NAME.GREY
                         },
                         {
                             messageId: 'top.sparrowhe.console.color_magenta',
-                            value: COLORS.COLOR_MAGENTA
+                            value: COLOR_NAME.MAGENTA
                         },
                         {
                             messageId: 'top.sparrowhe.console.color_cyan',
-                            value: COLORS.COLOR_CYAN
+                            value: COLOR_NAME.CYAN
                         }
                     ],
-                    defaultValue: COLORS.COLOR_NORMAL
+                    defaultValue: COLOR_NAME.NORMAL
                 },
                 TEXT: {
                     type: type.ParameterType.STRING,
@@ -190,7 +200,31 @@ class Console extends Extension {
                 // }
                 // console.log(lines);
                 // this.terminal.writeln('');
-                this.terminal.write(`\x1b1\x1b[3D\x1b[3D\x1b[3D${args.COLOR}${args.TEXT}${COLORS.COLOR_NORMAL}`);
+                let color = COLOR.NORMAL;
+                switch (args.COLOR) {
+                    case COLOR_NAME.NORMAL:
+                        color = COLOR.NORMAL;
+                        break;
+                    case COLOR_NAME.GREEN:
+                        color = COLOR.GREEN;
+                        break;
+                    case COLOR_NAME.YELLOW:
+                        color = COLOR.YELLOW;
+                        break;
+                    case COLOR_NAME.RED:
+                        color = COLOR.RED;
+                        break;
+                    case COLOR_NAME.GREY:
+                        color = COLOR.GREY;
+                        break;
+                    case COLOR_NAME.MAGENTA:
+                        color = COLOR.MAGENTA;
+                        break;
+                    case COLOR_NAME.CYAN:
+                        color = COLOR.CYAN;
+                        break;
+                }
+                this.terminal.write(`\x1b1\x1b[3D\x1b[3D\x1b[3D${color}${args.TEXT}${COLORS.COLOR_NORMAL}`);
                 this.terminal.prompt();
             }
         });
