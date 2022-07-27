@@ -200,28 +200,28 @@ class Console extends Extension {
                 // }
                 // console.log(lines);
                 // this.terminal.writeln('');
-                let color = COLOR.NORMAL;
+                let color = COLORS.COLOR_NORMAL;
                 switch (args.COLOR) {
                     case COLOR_NAME.NORMAL:
-                        color = COLOR.NORMAL;
+                        color = COLORS.COLOR_NORMAL;
                         break;
                     case COLOR_NAME.GREEN:
-                        color = COLOR.GREEN;
+                        color = COLORS.COLOR_GREEN;
                         break;
                     case COLOR_NAME.YELLOW:
-                        color = COLOR.YELLOW;
+                        color = COLORS.COLOR_YELLOW;
                         break;
                     case COLOR_NAME.RED:
-                        color = COLOR.RED;
+                        color = COLORS.COLOR_RED;
                         break;
                     case COLOR_NAME.GREY:
-                        color = COLOR.GREY;
+                        color = COLORS.COLOR_GREY;
                         break;
                     case COLOR_NAME.MAGENTA:
-                        color = COLOR.MAGENTA;
+                        color = COLORS.COLOR_MAGENTA;
                         break;
                     case COLOR_NAME.CYAN:
-                        color = COLOR.CYAN;
+                        color = COLORS.COLOR_CYAN;
                         break;
                 }
                 this.terminal.write(`\x1b1\x1b[3D\x1b[3D\x1b[3D${color}${args.TEXT}${COLORS.COLOR_NORMAL}`);
