@@ -1,0 +1,23 @@
+{
+    "top.sparrowhe.console.name": "王宫监控台",
+    "top.sparrowhe.console.description": "没用的控制台",
+    "top.sparrowhe.console.category": "王宫监控台",
+    "top.sparrowhe.console.open": "打开监控台",
+    "top.sparrowhe.console.close": "关闭监控台",
+    "top.sparrowhe.console.command": "陛下的指令",
+    "top.sparrowhe.console.execute": "当陛下有旨",
+    "top.sparrowhe.console.is_open": "监控台打开?",
+    "top.sparrowhe.console.output_log": "上书 [COLOR] 的 [TEXT]",
+    "top.sparrowhe.console.output_info": "记录日志 [TEXT]",
+    "top.sparrowhe.console.output_warn": "警告 [TEXT]",
+    "top.sparrowhe.console.output_err": "错误 [TEXT]",
+    "top.sparrowhe.console.clear": "退堂",
+    "top.sparrowhe.console.color_normal": "常",
+    "top.sparrowhe.console.color_green": "绿",
+    "top.sparrowhe.console.color_blue": "蓝",
+    "top.sparrowhe.console.color_red": "红",
+    "top.sparrowhe.console.color_yellow": "黄",
+    "top.sparrowhe.console.color_grey": "灰",
+    "top.sparrowhe.console.color_cyan": "青",
+    "top.sparrowhe.console.color_magenta": "紫"
+}
