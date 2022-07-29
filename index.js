@@ -30,7 +30,8 @@ class Console extends Extension {
     constructor(terminal) {
         super();
         this.handleDone = this.handleDone.bind(this);
-        this.handleMove = this.handleMove.bind(this);
+        this.handleTouchDone = this.handleTouchDone.bind(this);
+        this.handleTouchMove = this.handleTouchMove.bind(this);
         this.handleCommand = this.handleCommand.bind(this);
         this.terminal = new Terminal({
             cursorBlink: true,
@@ -86,6 +87,10 @@ class Console extends Extension {
             document.addEventListener("mousemove", this.handleMove);
             document.addEventListener("mouseup", this.handleDone);
         });
+        headerElement.addEventListener("touchstart", () => {
+            document.addEventListener("touchmove", this.handleTouchMove);
+            document.addEventListener("touchend", this.handleTouchDone);
+        })
         closeButton.addEventListener("click", () => {
             document.getElementById('sparrow-console').style.display = 'none';
         });
@@ -120,6 +125,17 @@ class Console extends Extension {
             messageId: 'top.sparrowhe.console.category',
             color: '#66CCFF'
         });
+
+        // api.addBlock({
+        //     opcode: 'top.sparrowhe.console.help',
+        //     type: 6,
+        //     messageId: 'top.sparrowhe.console.help',
+        //     categoryId: 'top.sparrowhe.console.category',
+        //     function: () => {
+        //         console.log("Hello");
+        //     }
+        // });
+
         api.addBlock({
             opcode: 'top.sparrowhe.console.open',
             type: type.BlockType.COMMAND,
@@ -128,6 +144,10 @@ class Console extends Extension {
             function: () => {
                 // this.terminal.open(document.getElementById("sparrow-console-body"));
                 // document.getElementById("sparrow-console").style = "";
+                // 1024x768以下设备不予打开
+                if (window.innerWidth < 1024 || window.innerHeight < 768) {
+                    return;
+                }
                 document.getElementById("sparrow-console").style = "";
             }
         });
@@ -319,6 +339,16 @@ class Console extends Extension {
     handleDone() {
         document.removeEventListener("mousemove", this.handleMove);
         document.removeEventListener("mouseup", this.handleDone);
+    }
+    handleTouchMove(element) {
+        let container = document.getElementById("sparrow-console");
+        let e = window.getComputedStyle(container);
+        container.style.left = "".concat(parseInt(e.left) + element.movementX, "px"),
+        container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
+    }
+    handleTouchDone() {
+        document.removeEventListener("touchmove", this.handleTouchMove);
+        document.removeEventListener("touchend", this.handleTouchDone);
     }
 }
 
