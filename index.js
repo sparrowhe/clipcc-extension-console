@@ -50,6 +50,7 @@ class Console extends Extension {
         this.fitAddon = new FitAddon();
         this.previousTouch = null;
         this.terminal.loadAddon(this.fitAddon);
+        this.overscrollBehaviorX = document.body.style.overscrollBehaviorX;
     }
 
     onInit() {
@@ -358,6 +359,7 @@ class Console extends Extension {
     handleMoveMouse(element) {
         if(this.moveLock == 'touch') return;
         this.moveLock = 'mouse';
+        document.body.style.overscrollBehaviorX = 'none';
         document.getSelection().removeAllRanges();
         let container = document.getElementById("sparrow-console");
         let e = window.getComputedStyle(container);
@@ -368,6 +370,7 @@ class Console extends Extension {
         if(this.moveLock == 'mouse') return;
         this.moveLock = 'touch';
         let container = document.getElementById("sparrow-console");
+        document.body.style.overscrollBehaviorX = 'none';
         let e = window.getComputedStyle(container);
         let touch = element.targetTouches[0];
         if(this.previousTouch){
@@ -382,12 +385,14 @@ class Console extends Extension {
         document.removeEventListener("mousemove", this.handleMoveMouse);
         document.removeEventListener("mouseup", this.handleDoneMouse);
         this.moveLock = null;
+        document.body.style.overscrollBehaviorX = this.overscrollBehaviorX;
     }
     handleDoneTouch(){
         document.removeEventListener("touchmove", this.handleMoveTouch);
         document.removeEventListener("touchend", this.handleDoneTouch);
         this.moveLock = null;
         this.previousTouch = null;
+        document.body.style.overscrollBehaviorX = this.overscrollBehaviorX;
     }
 }
 

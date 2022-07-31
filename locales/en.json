@@ -2,6 +2,7 @@
     "top.sparrowhe.console.name": "Console",
     "top.sparrowhe.console.description": "A useless console",
     "top.sparrowhe.console.category": "Console",
+    "top.sparrowhe.console.help": "📕 README before using",
     "top.sparrowhe.console.open": "Open console",
     "top.sparrowhe.console.close": "Close console",
     "top.sparrowhe.console.command": "Executed command",
