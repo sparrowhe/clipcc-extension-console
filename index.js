@@ -144,8 +144,8 @@ class Console extends Extension {
             function: () => {
                 // this.terminal.open(document.getElementById("sparrow-console-body"));
                 // document.getElementById("sparrow-console").style = "";
-                // 1024x768以下设备不予打开
-                if (window.innerWidth < 1024 || window.innerHeight < 768) {
+                // 800x400以下不给开
+                if (window.innerWidth < 800 || window.innerHeight < 400) {
                     return;
                 }
                 document.getElementById("sparrow-console").style = "";
