@@ -328,6 +328,14 @@ class Console extends Extension {
             this.terminal.writeln('exec <command>\t Execute a command');
             this.terminal.writeln('');
             this.terminal.writeln('\tThis Console Has Super Cow Power.');
+        } else if (command.trim() === 'moo') {
+            this.terminal.writeln('              (__)');
+            this.terminal.writeln('              (oo)');
+            this.terminal.writeln('        /------\/');
+            this.terminal.writeln('       / |    ||');
+            this.terminal.writeln('      *  /\\---/\\');
+            this.terminal.writeln('         ~~   ~~');
+            this.terminal.writeln('..."Have you mooed today?"...');
         } else if (command.trim() === 'clear') {
             this.terminal.clear();
         } else if (command.trim().startsWith('exec')) {
