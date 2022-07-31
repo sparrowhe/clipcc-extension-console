@@ -36,6 +36,10 @@ class Console extends Extension {
             cursorBlink: true,
             fontSize: 14,
             fontFamily: 'Consolas, "Courier New", monospace',
+            theme: {
+                background: '#424242',
+                selection: '#BDBDBD'
+            }
         });
         this.newCommand = false;
         this.hasReported = false;
@@ -62,8 +66,8 @@ class Console extends Extension {
                     <div class="sparrow-console-header-close" id="sparrow-console-header-close" style="width: 15px; height: 15px;">
                         <div class="sparrow-console-header-close-icon">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18 6L6 18" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M6 6L18 18" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M18 6L6 18" stroke="#EEEEEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M6 6L18 18" stroke="#EEEEEE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </div>
                     </div>
@@ -306,6 +310,7 @@ class Console extends Extension {
         }
     }
     handleMove(element) {
+        document.getSelection().removeAllRanges()
         let container = document.getElementById("sparrow-console");
         let e = window.getComputedStyle(container);
         container.style.left = "".concat(parseInt(e.left) + element.movementX, "px"),
