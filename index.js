@@ -1,5 +1,5 @@
 const { Extension, type, api } = require('clipcc-extension');
-
+const { FitAddon } = require('xterm-addon-fit')
 const { Terminal } = require('xterm');
 
 require('xterm/css/xterm.css');
@@ -29,8 +29,10 @@ class Console extends Extension {
 
     constructor(terminal) {
         super();
-        this.handleDone = this.handleDone.bind(this);
-        this.handleMove = this.handleMove.bind(this);
+        this.handleDoneMouse = this.handleDoneMouse.bind(this);
+        this.handleDoneTouch = this.handleDoneTouch.bind(this);
+        this.handleMoveMouse = this.handleMoveMouse.bind(this);
+        this.handleMoveTouch = this.handleMoveTouch.bind(this);
         this.handleCommand = this.handleCommand.bind(this);
         this.terminal = new Terminal({
             cursorBlink: true,
@@ -44,6 +46,10 @@ class Console extends Extension {
         this.newCommand = false;
         this.hasReported = false;
         this.newCommandStr = "";
+        this.moveLock = false;
+        this.fitAddon = new FitAddon();
+        this.previousTouchPosition = [0,0];
+        this.terminal.loadAddon(this.fitAddon);
     }
 
     onInit() {
@@ -83,8 +89,12 @@ class Console extends Extension {
         let headerElement = document.getElementById('sparrow-console-header');
         let closeButton = document.getElementById('sparrow-console-header-close');
         headerElement.addEventListener("mousedown", () => {
-            document.addEventListener("mousemove", this.handleMove);
-            document.addEventListener("mouseup", this.handleDone);
+            document.addEventListener("mousemove", this.handleMoveMouse);
+            document.addEventListener("mouseup", this.handleDoneMouse);
+        });
+        headerElement.addEventListener("touchstart", () => {
+            document.addEventListener("touchmove", this.handleMoveTouch);
+            document.addEventListener("touchend", this.handleDoneTouch);
         });
         closeButton.addEventListener("click", () => {
             document.getElementById('sparrow-console').style.display = 'none';
@@ -101,6 +111,7 @@ class Console extends Extension {
                 this.terminal.prompt();
                 curr_line = '';
             } else if (domEvent.key === 'Backspace') {
+                if (curr_line.length < 1) return;
                 curr_line = curr_line.substring(0, curr_line.length - 1);
                 this.terminal.write('\b \b');
             } else {
@@ -111,7 +122,8 @@ class Console extends Extension {
             }
         })
 
-        this.terminal.open(document.getElementById("sparrow-console-body"))
+        this.terminal.open(document.getElementById("sparrow-console-body"));
+        this.fitAddon.fit();
         this.terminal.writeln('Hello from ClipCC Console!');
         this.terminal.prompt();
 
@@ -309,16 +321,33 @@ class Console extends Extension {
             this.terminal.writeln(`Type "help" for a list of commands.`);
         }
     }
-    handleMove(element) {
+    handleMoveMouse(element) {
+        if(!this.moveLock) return;
+        this.moveLock = true;
         document.getSelection().removeAllRanges()
         let container = document.getElementById("sparrow-console");
         let e = window.getComputedStyle(container);
         container.style.left = "".concat(parseInt(e.left) + element.movementX, "px"),
         container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
     }
-    handleDone() {
-        document.removeEventListener("mousemove", this.handleMove);
-        document.removeEventListener("mouseup", this.handleDone);
+    handleMoveTouch(element) {
+        if(!this.moveLock) return;
+        this.moveLock = true;
+        document.getSelection().removeAllRanges()
+        let container = document.getElementById("sparrow-console");
+        let e = window.getComputedStyle(container);
+        container.style.left = "".concat(parseInt(e.left) + element.movementX, "px"),
+        container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
+    }
+    handleDoneMouse() {
+        document.removeEventListener("mousemove", this.handleMoveMouse);
+        document.removeEventListener("mouseup", this.handleDoneMouse);
+        this.moveLock = false;
+    }
+    handleDoneTouch(){
+        document.removeEventListener("touchmove", this.handleMoveTouch);
+        document.removeEventListener("touchend", this.handleDoneTouch);
+        this.moveLock = false;
     }
 }
 

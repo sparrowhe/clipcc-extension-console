@@ -8,7 +8,8 @@
     },
     "dependencies": {
         "clipcc-extension": "^0.1.9",
-        "xterm": "^4.19.0"
+        "xterm": "^4.19.0",
+        "xterm-addon-fit": "^0.5.0"
     },
     "devDependencies": {
         "copy-webpack-plugin": "^11.0.0",
