@@ -138,7 +138,7 @@ class Console extends Extension {
         api.addCategory({
             categoryId: 'top.sparrowhe.console.category',
             messageId: 'top.sparrowhe.console.category',
-            color: '#66CCFF'
+            color: '#616161'
         });
 
         // api.addBlock({
