@@ -344,11 +344,8 @@ class Console extends Extension {
         document.getSelection().removeAllRanges();
         let container = document.getElementById("sparrow-console");
         let e = window.getComputedStyle(container);
-        let barrier = [document.body.clientWidth - 610 , document.body.clientHeight - 405];
-        if(Number(container.style.left.replace('px','')) <= barrier[0]) container.style.left = "".concat(parseInt(e.left) + element.movementX, "px")
-        else if(Number(container.style.left.replace('px','')) > barrier[0]) container.style.left = "".concat(barrier[0], "px")
-        if(Number(container.style.top.replace('px','')) <= barrier[1]) container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
-        else if(Number(container.style.top.replace('px','')) > barrier[1]) container.style.top = "".concat(barrier[1], "px")
+        icontainer.style.left = "".concat(parseInt(e.left) + element.movementX, "px")
+        container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
     }
     handleMoveTouch(element) {
         if(this.moveLock == 'mouse') return;
@@ -357,13 +354,10 @@ class Console extends Extension {
         let e = window.getComputedStyle(container);
         let touch = element.targetTouches[0];
         if(this.previousTouch){
-            let barrier = [document.body.clientWidth - 610 , document.body.clientHeight - 405];
             let movementX = touch.pageX - this.previousTouch.pageX;
             let movementY = touch.pageY - this.previousTouch.pageY;
-            if(Number(container.style.left.replace('px','')) <= barrier[0]) container.style.left = "".concat(parseInt(e.left) + movementX, "px")
-            else if(Number(container.style.left.replace('px','')) > barrier[0]) container.style.left = "".concat(barrier[0], "px")
-            if(Number(container.style.top.replace('px','')) <= barrier[1]) container.style.top = "".concat(parseInt(e.top) + movementY, "px")
-            else if(Number(container.style.top.replace('px','')) > barrier[1]) container.style.top = "".concat(barrier[1], "px")
+            container.style.left = "".concat(parseInt(e.left) + movementX, "px")
+            container.style.top = "".concat(parseInt(e.top) + movementY, "px")
         }
         this.previousTouch = element.targetTouches[0];
     }
