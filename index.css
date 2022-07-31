@@ -1,7 +1,7 @@
 .sparrow-console {
     opacity: 0.8;
     z-index: 99999;
-    position: absolute;
+    position: fixed;
     height: calc(400px + 2 * var(--sparrow-console-padding) + var(--sparrow-console-header-height));
     width: 605px;
     top: 50px;
