@@ -324,6 +324,8 @@ class Console extends Extension {
             this.newCommandStr = command_str;
             this.terminal.writeln(`Executing: ${command_str}`);
             // eval(command_str);
+        } else if (command.trim() === '') {
+            this.terminal.prompt();
         } else {
             this.terminal.writeln(`Unknown command: ${command}`);
             this.terminal.writeln(`Type "help" for a list of commands.`);
