@@ -344,7 +344,7 @@ class Console extends Extension {
         document.getSelection().removeAllRanges();
         let container = document.getElementById("sparrow-console");
         let e = window.getComputedStyle(container);
-        icontainer.style.left = "".concat(parseInt(e.left) + element.movementX, "px")
+        container.style.left = "".concat(parseInt(e.left) + element.movementX, "px")
         container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
     }
     handleMoveTouch(element) {
