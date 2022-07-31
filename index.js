@@ -96,6 +96,10 @@ class Console extends Extension {
             document.addEventListener("touchmove", this.handleMoveTouch);
             document.addEventListener("touchend", this.handleDoneTouch);
         });
+        headerElement.addEventListener("touchstart", () => {
+            document.addEventListener("touchmove", this.handleTouchMove);
+            document.addEventListener("touchend", this.handleTouchDone);
+        })
         closeButton.addEventListener("click", () => {
             document.getElementById('sparrow-console').style.display = 'none';
         });
@@ -132,6 +136,17 @@ class Console extends Extension {
             messageId: 'top.sparrowhe.console.category',
             color: '#66CCFF'
         });
+
+        // api.addBlock({
+        //     opcode: 'top.sparrowhe.console.help',
+        //     type: 6,
+        //     messageId: 'top.sparrowhe.console.help',
+        //     categoryId: 'top.sparrowhe.console.category',
+        //     function: () => {
+        //         console.log("Hello");
+        //     }
+        // });
+
         api.addBlock({
             opcode: 'top.sparrowhe.console.open',
             type: type.BlockType.COMMAND,
@@ -140,6 +155,10 @@ class Console extends Extension {
             function: () => {
                 // this.terminal.open(document.getElementById("sparrow-console-body"));
                 // document.getElementById("sparrow-console").style = "";
+                // 800x400以下不给开
+                if (window.innerWidth < 800 || window.innerHeight < 400) {
+                    return;
+                }
                 document.getElementById("sparrow-console").style = "";
             }
         });
@@ -316,6 +335,8 @@ class Console extends Extension {
             this.newCommandStr = command_str;
             this.terminal.writeln(`Executing: ${command_str}`);
             // eval(command_str);
+        } else if (command.trim() === '') {
+            this.terminal.prompt();
         } else {
             this.terminal.writeln(`Unknown command: ${command}`);
             this.terminal.writeln(`Type "help" for a list of commands.`);
@@ -348,6 +369,16 @@ class Console extends Extension {
         document.removeEventListener("touchmove", this.handleMoveTouch);
         document.removeEventListener("touchend", this.handleDoneTouch);
         this.moveLock = false;
+    }
+    handleTouchMove(element) {
+        let container = document.getElementById("sparrow-console");
+        let e = window.getComputedStyle(container);
+        container.style.left = "".concat(parseInt(e.left) + element.movementX, "px"),
+        container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
+    }
+    handleTouchDone() {
+        document.removeEventListener("touchmove", this.handleTouchMove);
+        document.removeEventListener("touchend", this.handleTouchDone);
     }
 }
 

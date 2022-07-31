@@ -2,6 +2,7 @@
     "top.sparrowhe.console.name": "控制台",
     "top.sparrowhe.console.description": "没用的控制台",
     "top.sparrowhe.console.category": "Console",
+    "top.sparrowhe.console.help": "📕 使用前须知",
     "top.sparrowhe.console.open": "打开控制台",
     "top.sparrowhe.console.close": "关闭控制台",
     "top.sparrowhe.console.command": "执行的指令",
