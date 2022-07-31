@@ -107,9 +107,16 @@ class Console extends Extension {
         this.terminal.onKey(({ key, domEvent }) => {
             if (domEvent.key === 'Enter') {
                 this.terminal.writeln('');
-                this.handleCommand(curr_line);
-                this.terminal.prompt();
-                curr_line = '';
+                if (curr_line.length > 0) {
+                    this.handleCommand(curr_line);
+                    this.terminal.prompt();
+                    curr_line = '';
+                } else {
+                    this.terminal.prompt();
+                }
+                // this.handleCommand(curr_line);
+                // this.terminal.prompt();
+                // curr_line = '';
             } else if (domEvent.key === 'Backspace') {
                 if (curr_line.length < 1) return;
                 curr_line = curr_line.substring(0, curr_line.length - 1);
@@ -123,7 +130,7 @@ class Console extends Extension {
         })
 
         this.terminal.open(document.getElementById("sparrow-console-body"));
-        this.fitAddon.fit();
+        setTimeout(() => { this.fitAddon.fit(); }, 100);
         this.terminal.writeln('Hello from ClipCC Console!');
         this.terminal.prompt();
 
@@ -316,9 +323,11 @@ class Console extends Extension {
     }
     handleCommand(command) {
         if (command.trim() === 'help') {
-            this.terminal.writeln('help: Display help text');
-            this.terminal.writeln('clear: Clear the console');
-            this.terminal.writeln('exec <command>: Execute a command');
+            this.terminal.writeln('help\t Display help text');
+            this.terminal.writeln('clear\t Clear the console');
+            this.terminal.writeln('exec <command>\t Execute a command');
+            this.terminal.writeln('');
+            this.terminal.writeln('\tThis Console Has Super Cow Power.');
         } else if (command.trim() === 'clear') {
             this.terminal.clear();
         } else if (command.trim().startsWith('exec')) {

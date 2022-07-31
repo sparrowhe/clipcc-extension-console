@@ -2,7 +2,7 @@
     opacity: 0.8;
     z-index: 99999;
     position: absolute;
-    height: 400px;
+    height: calc(400px + 2 * var(--sparrow-console-padding) + var(--sparrow-console-header-height));
     width: 605px;
     top: 50px;
     left: 50px;
@@ -42,6 +42,19 @@
 .sparrow-console-body {
     border-radius: 0 0 8px 8px;
     padding: 9px;
-
     background-color: #424242;
+}
+
+.xterm .xterm-viewport {
+    overflow-y: auto !important
+}
+
+.xterm-viewport::-webkit-scrollbar {
+    width: 0.48rem;
+    display: block;
+}
+
+.xterm-viewport::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background: #616161;
 }
