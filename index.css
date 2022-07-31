@@ -3,7 +3,7 @@
     z-index: 99999;
     position: absolute;
     height: 400px;
-    width: 600px;
+    width: 605px;
     top: 50px;
     left: 50px;
     border-radius: 8px;
@@ -42,5 +42,6 @@
 .sparrow-console-body {
     border-radius: 0 0 8px 8px;
     padding: 9px;
+
     background-color: #424242;
 }

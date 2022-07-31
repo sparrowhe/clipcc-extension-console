@@ -46,9 +46,9 @@ class Console extends Extension {
         this.newCommand = false;
         this.hasReported = false;
         this.newCommandStr = "";
-        this.moveLock = false;
+        this.moveLock = null;
         this.fitAddon = new FitAddon();
-        this.previousTouchPosition = [0,0];
+        this.previousTouch = null;
         this.terminal.loadAddon(this.fitAddon);
     }
 
@@ -96,10 +96,6 @@ class Console extends Extension {
             document.addEventListener("touchmove", this.handleMoveTouch);
             document.addEventListener("touchend", this.handleDoneTouch);
         });
-        headerElement.addEventListener("touchstart", () => {
-            document.addEventListener("touchmove", this.handleTouchMove);
-            document.addEventListener("touchend", this.handleTouchDone);
-        })
         closeButton.addEventListener("click", () => {
             document.getElementById('sparrow-console').style.display = 'none';
         });
@@ -343,42 +339,44 @@ class Console extends Extension {
         }
     }
     handleMoveMouse(element) {
-        if(!this.moveLock) return;
-        this.moveLock = true;
-        document.getSelection().removeAllRanges()
+        if(this.moveLock == 'touch') return;
+        this.moveLock = 'mouse';
+        document.getSelection().removeAllRanges();
         let container = document.getElementById("sparrow-console");
         let e = window.getComputedStyle(container);
-        container.style.left = "".concat(parseInt(e.left) + element.movementX, "px"),
-        container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
+        let barrier = [document.body.clientWidth - 610 , document.body.clientHeight - 405];
+        if(Number(container.style.left.replace('px','')) <= barrier[0]) container.style.left = "".concat(parseInt(e.left) + element.movementX, "px")
+        else if(Number(container.style.left.replace('px','')) > barrier[0]) container.style.left = "".concat(barrier[0], "px")
+        if(Number(container.style.top.replace('px','')) <= barrier[1]) container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
+        else if(Number(container.style.top.replace('px','')) > barrier[1]) container.style.top = "".concat(barrier[1], "px")
     }
     handleMoveTouch(element) {
-        if(!this.moveLock) return;
-        this.moveLock = true;
-        document.getSelection().removeAllRanges()
+        if(this.moveLock == 'mouse') return;
+        this.moveLock = 'touch';
         let container = document.getElementById("sparrow-console");
         let e = window.getComputedStyle(container);
-        container.style.left = "".concat(parseInt(e.left) + element.movementX, "px"),
-        container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
+        let touch = element.targetTouches[0];
+        if(this.previousTouch){
+            let barrier = [document.body.clientWidth - 610 , document.body.clientHeight - 405];
+            let movementX = touch.pageX - this.previousTouch.pageX;
+            let movementY = touch.pageY - this.previousTouch.pageY;
+            if(Number(container.style.left.replace('px','')) <= barrier[0]) container.style.left = "".concat(parseInt(e.left) + movementX, "px")
+            else if(Number(container.style.left.replace('px','')) > barrier[0]) container.style.left = "".concat(barrier[0], "px")
+            if(Number(container.style.top.replace('px','')) <= barrier[1]) container.style.top = "".concat(parseInt(e.top) + movementY, "px")
+            else if(Number(container.style.top.replace('px','')) > barrier[1]) container.style.top = "".concat(barrier[1], "px")
+        }
+        this.previousTouch = element.targetTouches[0];
     }
     handleDoneMouse() {
         document.removeEventListener("mousemove", this.handleMoveMouse);
         document.removeEventListener("mouseup", this.handleDoneMouse);
-        this.moveLock = false;
+        this.moveLock = null;
     }
     handleDoneTouch(){
         document.removeEventListener("touchmove", this.handleMoveTouch);
         document.removeEventListener("touchend", this.handleDoneTouch);
-        this.moveLock = false;
-    }
-    handleTouchMove(element) {
-        let container = document.getElementById("sparrow-console");
-        let e = window.getComputedStyle(container);
-        container.style.left = "".concat(parseInt(e.left) + element.movementX, "px"),
-        container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
-    }
-    handleTouchDone() {
-        document.removeEventListener("touchmove", this.handleTouchMove);
-        document.removeEventListener("touchend", this.handleTouchDone);
+        this.moveLock = null;
+        this.previousTouch = null;
     }
 }
 
