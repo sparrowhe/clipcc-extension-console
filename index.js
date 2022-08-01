@@ -50,7 +50,7 @@ class Console extends Extension {
         this.fitAddon = new FitAddon();
         this.previousTouch = null;
         this.terminal.loadAddon(this.fitAddon);
-        this.overscrollBehaviorX = document.body.style.overscrollBehaviorX;
+        this.overscrollBehavior = document.body.style.overscrollBehavior;
     }
 
     onInit() {
@@ -172,7 +172,6 @@ class Console extends Extension {
             messageId: 'top.sparrowhe.console.close',
             categoryId: 'top.sparrowhe.console.category',
             function: () => {
-                // this.terminal.c();
                 document.getElementById("sparrow-console").style = "display: none;";
             }
         });
@@ -326,6 +325,7 @@ class Console extends Extension {
         if (command.trim() === 'help') {
             this.terminal.writeln('help\t Display help text');
             this.terminal.writeln('clear\t Clear the console');
+            this.terminal.writeln('exit\t Hide the console window');
             this.terminal.writeln('exec <command>\t Execute a command');
             this.terminal.writeln('');
             this.terminal.writeln('\tThis Console Has Super Cow Power.');
@@ -339,7 +339,9 @@ class Console extends Extension {
             this.terminal.writeln('..."Have you mooed today?"...');
         } else if (command.trim() === 'clear') {
             this.terminal.clear();
-        } else if (command.trim().startsWith('exec')) {
+        } else if (command.trim() === 'exit') {
+            document.getElementById("sparrow-console").style = "display: none;";
+        }else if (command.trim().startsWith('exec')) {
             if (command.trim().split(' ').length <= 1) {
                 this.terminal.writeln('Not enough arguments, check help text to see how to use this command');
                 return;
@@ -370,7 +372,7 @@ class Console extends Extension {
         if(this.moveLock == 'mouse') return;
         this.moveLock = 'touch';
         let container = document.getElementById("sparrow-console");
-        document.body.style.overscrollBehaviorX = 'none';
+        document.body.style.overscrollBehavior = 'none';
         let e = window.getComputedStyle(container);
         let touch = element.targetTouches[0];
         if(this.previousTouch){
@@ -385,14 +387,13 @@ class Console extends Extension {
         document.removeEventListener("mousemove", this.handleMoveMouse);
         document.removeEventListener("mouseup", this.handleDoneMouse);
         this.moveLock = null;
-        document.body.style.overscrollBehaviorX = this.overscrollBehaviorX;
     }
     handleDoneTouch(){
         document.removeEventListener("touchmove", this.handleMoveTouch);
         document.removeEventListener("touchend", this.handleDoneTouch);
         this.moveLock = null;
         this.previousTouch = null;
-        document.body.style.overscrollBehaviorX = this.overscrollBehaviorX;
+        document.body.style.overscrollBehavior = this.overscrollBehavior;
     }
 }
 
