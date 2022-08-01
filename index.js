@@ -140,6 +140,7 @@ class Console extends Extension {
                 let lengthBorder = this.commandHistory.length - 1;
                 if (this.currentHistory === lengthBorder) {
                     this.currentLine = this.latestCommand;
+                    this.currentHistory = null;
                 } else {
                     this.currentHistory = this.currentHistory + 1;
                     this.currentLine = this.commandHistory[this.currentHistory];
