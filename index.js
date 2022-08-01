@@ -52,6 +52,10 @@ class Console extends Extension {
         this.previousTouch = null;
         this.terminal.loadAddon(this.fitAddon);
         this.overscrollBehavior = document.body.style.overscrollBehavior;
+        this.commandHistory = [];
+        this.currentHistory = null;
+        this.latestCommand = null;
+        this.currentLine = '';
     }
 
     onInit() {
@@ -85,9 +89,6 @@ class Console extends Extension {
             </div>
         `;
         document.body.append(element);
-
-        let curr_line = '';
-
         let headerElement = document.getElementById('sparrow-console-header');
         let closeButton = document.getElementById('sparrow-console-header-close');
         headerElement.addEventListener("mousedown", (e) => {
@@ -107,29 +108,46 @@ class Console extends Extension {
         });
 
         this.terminal.prompt = () => {
-            this.terminal.write("\r\n>>> ");
+            this.terminal.write("\r>>> ");
         };
         // 接受输入
         this.terminal.onKey(({ key, domEvent }) => {
             if (domEvent.key === 'Enter') {
                 this.terminal.writeln('');
-                if (curr_line.length > 0) {
-                    this.handleCommand(curr_line);
+                if (this.currentLine.length > 0) {
+                    this.handleCommand(this.currentLine);
                     this.terminal.prompt();
-                    curr_line = '';
+                    this.currentLine = '';
                 } else {
                     this.terminal.prompt();
                 }
-                // this.handleCommand(curr_line);
-                // this.terminal.prompt();
-                // curr_line = '';
             } else if (domEvent.key === 'Backspace') {
-                if (curr_line.length < 1) return;
-                curr_line = curr_line.substring(0, curr_line.length - 1);
+                if (this.currentLine.length < 1) return;
+                this.currentLine = this.currentLine.substring(0, this.currentLine.length - 1);
                 this.terminal.write('\b \b');
+            } else if (domEvent.key === 'ArrowUp') {
+                if (this.commandHistory.length === 0) return;
+                if (this.currentHistory === 0) return;
+                if (this.currentHistory === null) {
+                    this.currentHistory = this.commandHistory.length - 1;
+                    this.latestCommand = this.currentLine;
+                } else this.currentHistory = this.currentHistory - 1;
+                this.currentLine = this.commandHistory[this.currentHistory];
+                this.terminal.write('\r\x1b[4C\x1b[K' + this.currentLine);
+            } else if (domEvent.key === 'ArrowDown') {
+                if (this.commandHistory.length === 0) return;
+                if (this.currentHistory === null) return;
+                let lengthBorder = this.commandHistory.length - 1;
+                if (this.currentHistory === lengthBorder) {
+                    this.currentLine = this.latestCommand;
+                } else {
+                    this.currentHistory = this.currentHistory + 1;
+                    this.currentLine = this.commandHistory[this.currentHistory];
+                }
+                this.terminal.write('\r\x1b[4C\x1b[K' + this.currentLine);
             } else {
                 if (domEvent.key.length === 1) {
-                    curr_line += key;
+                    this.currentLine += key;
                     this.terminal.write(key)
                 }
             }
@@ -137,7 +155,7 @@ class Console extends Extension {
 
         this.terminal.open(document.getElementById("sparrow-console-body"));
         setTimeout(() => { this.fitAddon.fit(); }, 100);
-        this.terminal.writeln('Hello from ClipCC Console!');
+        this.terminal.writeln('Hello from ClipCC Console!\n');
         this.terminal.prompt();
 
         api.addCategory({
@@ -267,7 +285,7 @@ class Console extends Extension {
                         color = COLORS.COLOR_CYAN;
                         break;
                 }
-                this.terminal.write(`\x1b1\x1b[3D\x1b[3D\x1b[3D${color}${args.TEXT}${COLORS.COLOR_NORMAL}`);
+                this.terminal.writeln(`\x1b1\x1b[3D\x1b[3D\x1b[3D${color}${args.TEXT}${COLORS.COLOR_NORMAL}`);
                 this.terminal.prompt();
             }
         });
@@ -276,17 +294,12 @@ class Console extends Extension {
             type: type.BlockType.HAT,
             messageId: 'top.sparrowhe.console.execute',
             categoryId: 'top.sparrowhe.console.category',
-            function: (args) => {
-                if(!!this.hasReported) {
-                    this.hasReported = false;
-                    return false;
-                }
-                if (this.newCommand) {
+            function: () => {
+                if (this.newCommand && !this.hasReported) {
                     this.newCommand = false;
                     this.hasReported = true;
                     return true;
-                }
-                return false;
+                } else return false;
             }
         });
         api.addBlock({
@@ -294,7 +307,7 @@ class Console extends Extension {
             type: type.BlockType.REPORTER,
             messageId: 'top.sparrowhe.console.command',
             categoryId: 'top.sparrowhe.console.category',
-            function: (args) => {
+            function: () => {
                 return this.newCommandStr;
             }
         });
@@ -303,12 +316,8 @@ class Console extends Extension {
             type: type.BlockType.REPORTER,
             messageId: 'top.sparrowhe.console.is_open',
             categoryId: 'top.sparrowhe.console.category',
-            function: (args) => {
-                if (document.getElementById("sparrow-console").style.display === 'none') {
-                    return false;
-                } else {
-                    return true;
-                }
+            function: () => {
+                return document.getElementById("sparrow-console").style.display === 'none' ? false : true;
             }
         })
     }
@@ -327,10 +336,14 @@ class Console extends Extension {
         ]);
     }
     handleCommand(command) {
+        if (this.commandHistory.length >= 20) this.commandHistory.shift();
+        this.commandHistory.push(command.trim());
+        this.currentHistory = null;
+        this.latestCommand= null;
         if (command.trim() === 'help') {
-            this.terminal.writeln('help\t Display help text');
-            this.terminal.writeln('clear\t Clear the console');
-            this.terminal.writeln('exit\t Hide the console window');
+            this.terminal.writeln('help\t\t Display help text');
+            this.terminal.writeln('clear\t\t Clear the console');
+            this.terminal.writeln('exit\t\t Hide the console window');
             this.terminal.writeln('exec <command>\t Execute a command');
             this.terminal.writeln('');
             this.terminal.writeln('\tThis Console Has Super Cow Power.');
@@ -346,12 +359,13 @@ class Console extends Extension {
             this.terminal.clear();
         } else if (command.trim() === 'exit') {
             document.getElementById("sparrow-console").style = "display: none;";
-        }else if (command.trim().startsWith('exec')) {
+        } else if (command.trim().startsWith('exec')) {
             if (command.trim().split(' ').length <= 1) {
-                this.terminal.writeln('Not enough arguments, check help text to see how to use this command');
+                this.terminal.writeln('Not enough arguments, type "help" for usage');
                 return;
             }
             const command_str = command.trim().substring(4).trim();
+            this.hasReported = false;
             this.newCommand = true;
             this.newCommandStr = command_str;
             this.terminal.writeln(`Executing: ${command_str}`);
