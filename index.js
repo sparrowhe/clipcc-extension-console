@@ -377,8 +377,8 @@ class Console extends Extension {
         container.style.top  = (mousePosition.y + this.offset[1]) + 'px';
     }
     handleMoveTouch(element) {
-        document.body.style.overscrollBehavior = 'none';
         if(this.moveLock == 'mouse') return;
+        document.body.style.overscrollBehavior = 'none';
         this.moveLock = 'touch';
         let container = document.getElementById("sparrow-console");
         let e = window.getComputedStyle(container);
