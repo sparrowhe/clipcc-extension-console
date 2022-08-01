@@ -43,6 +43,7 @@ class Console extends Extension {
                 selection: '#BDBDBD'
             }
         });
+        this.offset = null;
         this.newCommand = false;
         this.hasReported = false;
         this.newCommandStr = "";
@@ -89,7 +90,11 @@ class Console extends Extension {
 
         let headerElement = document.getElementById('sparrow-console-header');
         let closeButton = document.getElementById('sparrow-console-header-close');
-        headerElement.addEventListener("mousedown", () => {
+        headerElement.addEventListener("mousedown", (e) => {
+            this.offset = [
+                document.getElementById("sparrow-console").offsetLeft - e.clientX,
+                document.getElementById("sparrow-console").offsetTop - e.clientY
+            ];
             document.addEventListener("mousemove", this.handleMoveMouse);
             document.addEventListener("mouseup", this.handleDoneMouse);
         });
@@ -361,18 +366,21 @@ class Console extends Extension {
     handleMoveMouse(element) {
         if(this.moveLock == 'touch') return;
         this.moveLock = 'mouse';
-        document.body.style.overscrollBehaviorX = 'none';
+        element.preventDefault();
         document.getSelection().removeAllRanges();
         let container = document.getElementById("sparrow-console");
-        let e = window.getComputedStyle(container);
-        container.style.left = "".concat(parseInt(e.left) + element.movementX, "px")
-        container.style.top = "".concat(parseInt(e.top) + element.movementY, "px")
+        let mousePosition = {
+            x : element.clientX,
+            y : element.clientY
+        };
+        container.style.left = (mousePosition.x + this.offset[0]) + 'px';
+        container.style.top  = (mousePosition.y + this.offset[1]) + 'px';
     }
     handleMoveTouch(element) {
+        document.body.style.overscrollBehavior = 'none';
         if(this.moveLock == 'mouse') return;
         this.moveLock = 'touch';
         let container = document.getElementById("sparrow-console");
-        document.body.style.overscrollBehavior = 'none';
         let e = window.getComputedStyle(container);
         let touch = element.targetTouches[0];
         if(this.previousTouch){
