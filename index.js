@@ -286,7 +286,7 @@ class Console extends Extension {
                         color = COLORS.COLOR_CYAN;
                         break;
                 }
-                this.terminal.writeln(`\x1b1\x1b[3D\x1b[3D\x1b[3D${color}${args.TEXT}${COLORS.COLOR_NORMAL}`);
+                this.terminal.writeln(`\r\x1b[K${color}${args.TEXT}${COLORS.COLOR_NORMAL}`);
                 this.terminal.prompt();
             }
         });
@@ -314,7 +314,7 @@ class Console extends Extension {
         });
         api.addBlock({
             opcode: 'top.sparrowhe.console.is_open',
-            type: type.BlockType.REPORTER,
+            type: type.BlockType.BOOLEAN,
             messageId: 'top.sparrowhe.console.is_open',
             categoryId: 'top.sparrowhe.console.category',
             function: () => {
