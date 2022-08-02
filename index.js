@@ -56,6 +56,7 @@ class Console extends Extension {
         this.currentHistory = null;
         this.latestCommand = null;
         this.currentLine = '';
+        this.currentPosition = -1;
     }
 
     onInit() {
@@ -110,9 +111,9 @@ class Console extends Extension {
         this.terminal.prompt = () => {
             this.terminal.write("\r>>> ");
         };
-        // 接受输入
         this.terminal.onKey(({ key, domEvent }) => {
             if (domEvent.key === 'Enter') {
+                this.currentPosition = -1;
                 this.terminal.writeln('');
                 if (this.currentLine.length > 0) {
                     this.handleCommand(this.currentLine);
@@ -123,21 +124,31 @@ class Console extends Extension {
                 }
             } else if (domEvent.key === 'Backspace') {
                 if (this.currentLine.length < 1) return;
-                this.currentLine = this.currentLine.substring(0, this.currentLine.length - 1);
-                this.terminal.write('\b \b');
+                this.currentLine = this.currentLine.substring(0, this.currentPosition) + this.currentLine.substring(this.currentPosition + 1);
+                this.terminal.write('\r\x1b[4C\x1b[K' + this.currentLine);
+                this.terminal.write(`\r\x1b[4C`);
+                this.currentPosition > 0 ? this.terminal.write(`\x1b[${this.currentPosition}C`) : null;
+                this.currentPosition--;
             } else if (domEvent.key === 'ArrowUp') {
+                // 若无历史 返回
                 if (this.commandHistory.length === 0) return;
+                // 若当前已经到达最远的历史记录 返回
                 if (this.currentHistory === 0) return;
+                // 若尚未查看历史记录 将历史记录位置初始化并存储当然命令以备查询 否则将历史记录位置减一
                 if (this.currentHistory === null) {
                     this.currentHistory = this.commandHistory.length - 1;
                     this.latestCommand = this.currentLine;
                 } else this.currentHistory = this.currentHistory - 1;
+                // 打印历史记录
                 this.currentLine = this.commandHistory[this.currentHistory];
+                this.currentPosition = this.currentLine.length - 1;
                 this.terminal.write('\r\x1b[4C\x1b[K' + this.currentLine);
             } else if (domEvent.key === 'ArrowDown') {
                 if (this.commandHistory.length === 0) return;
+                // 若当前没有查看历史记录 返回
                 if (this.currentHistory === null) return;
                 let lengthBorder = this.commandHistory.length - 1;
+                // 若查询最近的历史记录并仍向下查询 则将查询位置设置为未初始化 并展示先前存储的当前命令 否则历史记录位置加一
                 if (this.currentHistory === lengthBorder) {
                     this.currentLine = this.latestCommand;
                     this.currentHistory = null;
@@ -145,11 +156,26 @@ class Console extends Extension {
                     this.currentHistory = this.currentHistory + 1;
                     this.currentLine = this.commandHistory[this.currentHistory];
                 }
+                this.currentPosition = this.currentLine.length - 1;
                 this.terminal.write('\r\x1b[4C\x1b[K' + this.currentLine);
+            } else if (domEvent.key === 'ArrowLeft') {
+                if (this.currentLine.length === 0) return;
+                if (this.currentPosition === -1) return;
+                this.currentPosition = this.currentPosition - 1;
+                this.terminal.write('\x1b[1D');
+            } else if (domEvent.key === 'ArrowRight') {
+                if (this.currentLine.length === 0) return;
+                let moveRange = this.currentLine.length - 1;
+                if (this.currentPosition === moveRange) return;
+                this.currentPosition = this.currentPosition + 1;
+                this.terminal.write('\x1b[1C');
             } else {
                 if (domEvent.key.length === 1) {
-                    this.currentLine += key;
-                    this.terminal.write(key)
+                    this.currentPosition++;
+                    this.terminal.write(key + this.currentLine.substring(this.currentPosition));
+                    let moveLength = this.currentLine.substring(this.currentPosition).length;
+                    this.currentLine = this.currentLine.substring(0, this.currentPosition) + key + this.currentLine.substring(this.currentPosition);
+                    moveLength > 0 ? this.terminal.write(`\x1b[${moveLength}D`) : null ;
                 }
             }
         })
@@ -181,8 +207,6 @@ class Console extends Extension {
             messageId: 'top.sparrowhe.console.open',
             categoryId: 'top.sparrowhe.console.category',
             function: () => {
-                // this.terminal.open(document.getElementById("sparrow-console-body"));
-                // document.getElementById("sparrow-console").style = "";
                 // 800x400以下不给开
                 if (window.innerWidth < 800 || window.innerHeight < 400) {
                     return;
