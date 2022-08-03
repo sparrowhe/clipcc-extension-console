@@ -52,6 +52,7 @@ class Console extends Extension {
         this.previousTouch = null;
         this.terminal.loadAddon(this.fitAddon);
         this.overscrollBehavior = document.body.style.overscrollBehavior;
+        this.touchAction = '';
         this.commandHistory = [];
         this.currentHistory = null;
         this.latestCommand = null;
@@ -417,7 +418,10 @@ class Console extends Extension {
     }
     handleMoveTouch(element) {
         if(this.moveLock == 'mouse') return;
-        document.body.style.overscrollBehavior = 'none';
+        if(/^((?!chrome|android).)*safari/i.test(navigator.userAgent)){
+            this.touchAction = document.getElementById("sparrow-console-header").style.touchAction;
+            document.getElementById("sparrow-console-header").style.touchAction = 'none';
+        } else document.body.style.overscrollBehavior = 'none';
         this.moveLock = 'touch';
         let container = document.getElementById("sparrow-console");
         let e = window.getComputedStyle(container);
@@ -440,7 +444,9 @@ class Console extends Extension {
         document.removeEventListener("touchend", this.handleDoneTouch);
         this.moveLock = null;
         this.previousTouch = null;
-        document.body.style.overscrollBehavior = this.overscrollBehavior;
+        if(/^((?!chrome|android).)*safari/i.test(navigator.userAgent)){
+            document.getElementById("sparrow-console-header").style.touchAction = this.touchAction;
+        } else document.body.style.overscrollBehavior = this.overscrollBehavior;
     }
 }
 
