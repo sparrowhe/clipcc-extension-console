@@ -186,10 +186,10 @@ class Console extends Extension {
                 handleFlag = false;
                 return;
             }
-            let dataLength = data.replace(/[^\u0000-\u00ff]/g,"aaa").length
+            let dataLength = data.replace(/[^\u0000-\u00ff]/g,"aa").length
             this.currentPosition += dataLength;
             this.terminal.write(data + this.currentLine.substring(this.currentPosition));
-            let moveLength = this.currentLine.substring(this.currentPosition).length;
+            let moveLength = this.currentLine.substring(this.currentPosition).replace(/[^\u0000-\u00ff]/g,"aa").length;
             this.currentLine = this.currentLine.substring(0, this.currentPosition) + data + this.currentLine.substring(this.currentPosition);
             moveLength > 0 ? this.terminal.write(`\x1b[${moveLength}D`) : null ;
         })
