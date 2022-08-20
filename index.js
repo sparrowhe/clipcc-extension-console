@@ -111,6 +111,7 @@ class Console extends Extension {
         this.terminal.prompt = () => {
             this.terminal.write("\r>>> ");
         };
+        let handleFlag = false;
         this.terminal.onKey(({ key, domEvent }) => {
             if (domEvent.key === 'Enter') {
                 this.currentPosition = -1;
@@ -122,6 +123,7 @@ class Console extends Extension {
                 } else {
                     this.terminal.prompt();
                 }
+                handleFlag = true;
             } else if (domEvent.key === 'Backspace') {
                 if (this.currentLine.length < 1) return;
                 this.currentLine = this.currentLine.substring(0, this.currentPosition) + this.currentLine.substring(this.currentPosition + 1);
@@ -129,6 +131,7 @@ class Console extends Extension {
                 this.terminal.write(`\r\x1b[4C`);
                 this.currentPosition > 0 ? this.terminal.write(`\x1b[${this.currentPosition}C`) : null;
                 this.currentPosition--;
+                handleFlag = true;
             } else if (domEvent.key === 'ArrowUp') {
                 // 若无历史 返回
                 if (this.commandHistory.length === 0) return;
@@ -143,6 +146,7 @@ class Console extends Extension {
                 this.currentLine = this.commandHistory[this.currentHistory];
                 this.currentPosition = this.currentLine.length - 1;
                 this.terminal.write('\r\x1b[4C\x1b[K' + this.currentLine);
+                handleFlag = true;
             } else if (domEvent.key === 'ArrowDown') {
                 if (this.commandHistory.length === 0) return;
                 // 若当前没有查看历史记录 返回
@@ -158,26 +162,36 @@ class Console extends Extension {
                 }
                 this.currentPosition = this.currentLine.length - 1;
                 this.terminal.write('\r\x1b[4C\x1b[K' + this.currentLine);
+                handleFlag = true;
             } else if (domEvent.key === 'ArrowLeft') {
                 if (this.currentLine.length === 0) return;
                 if (this.currentPosition === -1) return;
                 this.currentPosition = this.currentPosition - 1;
                 this.terminal.write('\x1b[1D');
+                handleFlag = true;
             } else if (domEvent.key === 'ArrowRight') {
                 if (this.currentLine.length === 0) return;
                 let moveRange = this.currentLine.length - 1;
                 if (this.currentPosition === moveRange) return;
                 this.currentPosition = this.currentPosition + 1;
                 this.terminal.write('\x1b[1C');
+                handleFlag = true;
             } else {
-                if (domEvent.key.length === 1) {
-                    this.currentPosition++;
-                    this.terminal.write(key + this.currentLine.substring(this.currentPosition));
-                    let moveLength = this.currentLine.substring(this.currentPosition).length;
-                    this.currentLine = this.currentLine.substring(0, this.currentPosition) + key + this.currentLine.substring(this.currentPosition);
-                    moveLength > 0 ? this.terminal.write(`\x1b[${moveLength}D`) : null ;
-                }
+                handleFlag = false;
             }
+        })
+
+        this.terminal.onData(data => {
+            if (handleFlag) {
+                handleFlag = false;
+                return;
+            }
+            let dataLength = data.replace(/[^\u0000-\u00ff]/g,"aaa").length
+            this.currentPosition += dataLength;
+            this.terminal.write(data + this.currentLine.substring(this.currentPosition));
+            let moveLength = this.currentLine.substring(this.currentPosition).length;
+            this.currentLine = this.currentLine.substring(0, this.currentPosition) + data + this.currentLine.substring(this.currentPosition);
+            moveLength > 0 ? this.terminal.write(`\x1b[${moveLength}D`) : null ;
         })
 
         this.terminal.open(document.getElementById("sparrow-console-body"));
@@ -332,6 +346,9 @@ class Console extends Extension {
             type: type.BlockType.REPORTER,
             messageId: 'top.sparrowhe.console.command',
             categoryId: 'top.sparrowhe.console.category',
+            option: {
+                monitor: true
+            },
             function: () => {
                 return this.newCommandStr;
             }
